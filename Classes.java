@@ -41,7 +41,22 @@ public class ScreenplayApp extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+/ Inside ScreenplayApp class
+Collaboration.connectToServer();
 
+// To send a message
+String message = scriptTextArea.getText();
+Collaboration.sendMessage(message);
+
+// To receive a message
+String receivedMessage = Collaboration.receiveMessage();
+if (receivedMessage != null) {
+    // Update UI with received message
+    scriptTextArea.setText(receivedMessage);
+}
+
+// Don't forget to disconnect when closing the application
+primaryStage.setOnCloseRequest(e -> 
     public static void main(String[] args) {
         launch(args);
     }
