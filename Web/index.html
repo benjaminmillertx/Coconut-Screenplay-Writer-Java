@@ -1,1 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coconut Screenplay Writing App 🥥</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Play', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .jumbotron {
+            background-color: #007bff;
+            color: white;
+        }
+        .feature-box {
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #007bff;
+            border-radius: 10px;
+        }
+        .screenplay-editor {
+            width: 100%;
+            height: 300px;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #007bff;
+            border-radius: 10px;
+            resize: vertical;
+        }
+        .card-header, .btn-primary, .btn-success, .btn-info, .btn-secondary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .card-header {
+            color: white;
+        }
+        .icon {
+            font-size: 24px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="jumbotron text-center">
+            <h1>Coconut Screenplay Writing App 🥥</h1>
+            <p>Collaborate or write solo with ease, featuring auto-correct and predefined screenplay keywords.</p>
+        </div>
 
+        <!-- Login Form -->
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-header"><i class="icon">&#x1F464;</i>Login</div>
+                    <div class="card-body">
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label for="loginEmail">Email address:</label>
+                                <input type="email" class="form-control" id="loginEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="loginPassword">Password:</label>
+                                <input type="password" class="form-control" id="loginPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="row mt-4">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-header"><i class="icon">&#x1F4E7;</i>Register</div>
+                    <div class="card-body">
+                        <form id="registerForm">
+                            <div class="form-group">
+                                <label for="registerEmail">Email address:</label>
+                                <input type="email" class="form-control" id="registerEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerPassword">Password:</label>
+                                <input type="password" class="form-control" id="registerPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="row">
+            <div class="col-md-4 feature-box">
+                <h3>Collaborative Writing 🤝</h3>
+                <p>Work with your team in real-time or go solo. Our app provides seamless collaboration features, ensuring everyone stays in sync.</p>
+            </div>
+            <div class="col-md-4 feature-box">
+                <h3>Auto-Correct ✍️</h3>
+                <p>Our intelligent auto-correct feature helps you maintain flawless writing, catching typos and grammar mistakes as you type.</p>
+            </div>
+            <div class="col-md-4 feature-box">
+                <h3>Predefined Keywords 🎬</h3>
+                <p>Easily insert standard screenplay keywords like <code>INT</code> and <code>EXT</code>, ensuring your screenplay meets industry standards.</p>
+            </div>
+        </div>
+
+        <!-- Screenplay Editor -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <h2>Screenplay Editor</h2>
+                <div class="form-group">
+                    <label for="predefinedKeywords">Insert Keyword:</label>
+                    <select class="form-control" id="predefinedKeywords">
+                        <option value="INT.">INT.</option>
+                        <option value="EXT.">EXT.</option>
+                        <option value="DAY">DAY</option>
+                        <option value="NIGHT">NIGHT</option>
+                        <option value="FADE IN:">FADE IN:</option>
+                        <option value="FADE OUT:">FADE OUT:</option>
+                        <option value="CUT TO:">CUT TO:</option>
+                        <option value="DISSOLVE TO:">DISSOLVE TO:</option>
+                    </select>
+                </div>
+                <textarea class="screenplay-editor" id="screenplayEditor"></textarea>
+                <button class="btn btn-success mt-2" id="saveButton">Save Screenplay</button>
+                <button class="btn btn-secondary mt-2" id="loadButton">Load Screenplay</button>
+                <button class="btn btn-info mt-2" id="shareButton">Share Screenplay</button>
+                <button class="btn btn-secondary mt-2" id="exportButton">Export to Text File</button>
+                <div class="form-group mt-2">
+                    <label for="genreExamples">Select Genre Example:</label>
+                    <select class="form-control" id="genreExamples">
+                        <option value="action">Action</option>
+                        <option value="drama">Drama</option>
+                        <option value="comedy">Comedy</option>
+                        <option value="thriller">Thriller</option>
+                        <option value="horror">Horror</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Mock database for users and screenplays
+        const users = {};
+        const screenplays = {};
+
+        // Function to validate email using regex
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        // Function to validate password (minimum 6 characters, at least one letter and one number)
+        function validatePassword(password) {
+            const re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+            return re.test(password);
+        }
+
+        // Handle user registration
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            if (validateEmail(email) && validatePassword(password)) {
+                if (!users[email]) {
+                    users[email] = { password, screenplays: [] };
+                    alert('Registration successful!');
+                } else {
+                    alert('Email already registered!');
+                }
+            } else {
+                alert('Invalid email or password format!');
+            }
+        });
+
+        // Handle user login
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (users[email] && users[email].password === password) {
+                alert('Login successful!');
+                localStorage.setItem('currentUser', email);
+            } else {
+                alert('Invalid email or password!');
+            }
+        });
+
+        // Handle screenplay save
+        document.getElementBy
