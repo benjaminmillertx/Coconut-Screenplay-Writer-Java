@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coconut Screenplay Writing App</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Play&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Play', sans-serif;
+            background-color: white;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            background-color: #0277bd;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            margin-top: 20px;
+            border: 1px solid #0277bd;
+        }
+        .btn {
+            margin: 10px 0;
+        }
+        .card {
+            margin: 20px 0;
+            box-shadow: 0 4px 8px 0 rgba(2, 119, 189, 0.2);
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        $(document).ready(function() {
+            const socket = io();
+
+            socket.on('connect', () => {
+                console.log('Connected to the server');
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Disconnected from the server');
+            });
+
+            socket.on('updateScreenplay', (content) => {
+                $('#screenplayEditor').val(content);
+            });
+
+            $('#screenplayEditor').on('input', function() {
+                const content = $(this).val();
+                socket.emit('updateScreenplay', content);
+            });
+
+            $('#loadButton').on('click', function() {
+                $('#fileInput').click();
+            });
+
+            $('#fileInput').on('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#screenplayEditor').val(e.target.result);
+                        socket.emit('updateScreenplay', e.target.result);
+                    };
+                    reader.readAsText(file);
+                }
+            });
+
+            $('#shareButton').on('click', function() {
+                const collaboratorEmail = prompt('Enter the email of the collaborator:');
+                if (collaboratorEmail) {
+                    alert('Share this link with your collaborator: ' + window.location.href);
+                }
+            });
+
+            $('#exportButton').on('click', function() {
+                const screenplayContent = $('#screenplayEditor').val();
+                const blob = new Blob([screenplayContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'screenplay.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            $('#predefinedKeywords').on('change', function() {
+                const keyword = this.value;
+                const textarea = $('#screenplayEditor');
+                textarea.val(textarea.val() + keyword + '\n');
+                this.value = '';
+                socket.emit('updateScreenplay', textarea.val());
+            });
+
+            $('#genreExamples').on('change', function() {
+                const genre = this.value;
+                const examples = {
+                    action: "ACTION SCENE: A high-speed chase through the city...",
+                    drama: "DRAMA SCENE: Two characters having an intense conversation...",
+                    comedy: "COMEDY SCENE: A hilarious misunderstanding unfolds...",
+                    thriller: "THRILLER SCENE: A suspenseful moment with a twist...",
+                    horror: "HORROR SCENE: A terrifying encounter in a dark room..."
+                };
+                const textarea = $('#screenplayEditor');
+                textarea.val(textarea.val() + examples[genre] + '\n');
+                this.value = '';
+                socket.emit('updateScreenplay', textarea.val());
+            });
+
+            $('#additionalExamples').on('change', function() {
+                const example = this.value;
+                const additionalExamples = {
+                    characterMap: "CHARACTER MAP: Protagonist - Main Character, Antagonist - Villain...",
+                    synopsis: "SYNOPSIS: A brief summary of the plot...",
+                    screenplayBible: "SCREENPLAY BIBLE: Detailed breakdown of characters, settings, and plot...",
+                    treatment: "TREATMENT: Expanded synopsis with key scenes and dialogue..."
+                };
+                const textarea = $('#screenplayEditor');
+                textarea.val(textarea.val() + additionalExamples[example] + '\n');
+                this.value = '';
+                socket.emit('updateScreenplay', textarea.val());
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Coconut 🥥 Screenplay Writing App</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Collaborate</h5>
+                        <p class="card-text">Share your screenplay with others by simply entering their email. Work together seamlessly!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Spellcheck</h5>
+                        <p class="card-text">Our built-in spellcheck feature ensures your screenplay is free of typos and grammatical errors.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Predefined Keywords</h5>
+                        <p class="card-text">Quickly insert commonly used screenplay terms like INT., EXT., and more with our predefined keywords.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h2>Screenplay Editor</h2>
+            <textarea id="screenplayEditor" spellcheck="true"></textarea>
+            <button id="loadButton" class="btn btn-info">Load Screenplay from File</button>
+            <button id="shareButton" class="btn btn-warning">Share Screenplay</button>
+            <button id="exportButton" class="btn btn-danger">Export to Text File</button>
+            <input type="file" id="fileInput" style="display: none;" />
+        </div>
+        <div>
+            <h2>Insert Predefined Text</h2>
+            <div class="form-group">
+                <label for="predefinedKeywords">Select Keyword:</label>
+                <select id="predefinedKeywords" class="form-control">
+                    <option value="">--Select--</option>
+                    <option value="CUT TO:">CUT TO:</option>
+                    <option value="FADE IN:">FADE IN:</option>
+                    <option value="FADE OUT:">FADE OUT:</option>
+                    <option value="INT.">INT.</option>
+                    <option value="EXT.">EXT.</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="genreExamples">Select Genre Example:</label>
+                <select id="genreExamples" class="form-control">
+                    <option value="">--Select--</option>
+                    <option value="action">Action</option>
+                    <option value="drama">Drama</option>
+                    <option value="comedy">Comedy</option>
+                    <option value="thriller">Thriller</option>
+                    <option value="horror">Horror</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="additionalExamples">Select Additional Example:</label>
+                <select id="additionalExamples" class="form-control">
+                    <option value="">--Select--</option>
+                    <option value="characterMap">Character Map</option>
+                    <option value="synopsis">Synopsis</option>
+                    <option value="screenplayBible">Screenplay Bible</option>
+                    <option value="treatment">Treatment</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
