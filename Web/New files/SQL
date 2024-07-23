@@ -1,0 +1,18 @@
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+CREATE TABLE screenplays (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE collaborators (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    screenplay_id INT NOT NULL,
+    collaborator_email VARCHAR(255) NOT NULL,
+    FOREIGN KEY (screenplay_id) REFERENCES screenplays(id) ON DELETE CASCADE
+);
