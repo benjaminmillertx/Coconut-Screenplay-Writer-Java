@@ -39,25 +39,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="en">
-<?php include('../includes/header.php'); ?>
-    <h2>Login</h2>
-    <?php if (isset($error)) echo "<p>$error</p>"; ?>
-    <form action="index.php" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" name="password" required>
-        <button type="submit" name="login">Login</button>
-    </form>
-    <h2>Register</h2>
-    <form action="index.php" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" name="username" required>
-        <label for="email">Email:</label>
-        <input type="email" name="email" required>
-        <label for="password">Password:</label>
-        <input type="password" name="password" required>
-        <button type="submit" name="register">Register</button>
-    </form>
-<?php include('../includes/footer.php'); ?>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coconut Screenplay Writing</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="../assets/img/coconut_logo.png" alt="Coconut Logo" class="logo">
+            <h1>Coconut Screenplay Writing</h1>
+        </div>
+        <div class="login-container">
+            <div class="form-container">
+                <h2>Login</h2>
+                <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
+                <form action="index.php" method="POST">
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" required>
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" required>
+                    <button type="submit" name="login">Login</button>
+                </form>
+            </div>
+            <div class="form-container">
+                <h2>Register</h2>
+                <form action="index.php" method="POST">
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" required>
+                    <label for="email">Email:</label>
+                    <input type="email" name="email" required>
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" required>
+                    <button type="submit" name="register">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
 </html>
