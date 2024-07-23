@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coconut Screenplay Writing App</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Coconut Screenplay Writing App</h1>
+
+    <!-- User Registration -->
+    <div>
+        <h2>Register</h2>
+        <form id="registerForm">
+            <label for="registerEmail">Email:</label>
+            <input type="email" id="registerEmail" required>
+            <label for="registerPassword">Password:</label>
+            <input type="password" id="registerPassword" required>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <!-- User Login -->
+    <div>
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="loginEmail">Email:</label>
+            <input type="email" id="loginEmail" required>
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <!-- Screenplay Editor -->
+    <div>
+        <h2>Screenplay Editor</h2>
+        <textarea id="screenplayEditor" rows="20" cols="100"></textarea>
+        <button id="saveButton">Save Screenplay</button>
+        <button id="loadButton">Load Screenplay</button>
+        <button id="shareButton">Share Screenplay</button>
+        <button id="exportButton">Export to Text File</button>
+    </div>
+
+    <!-- Dropdowns for Examples -->
+    <div>
+        <h2>Insert Predefined Text</h2>
+        <label for="predefinedKeywords">Select Keyword:</label>
+        <select id="predefinedKeywords">
+            <option value="">--Select--</option>
+            <option value="CUT TO:">CUT TO:</option>
+            <option value="FADE IN:">FADE IN:</option>
+            <option value="FADE OUT:">FADE OUT:</option>
+            <option value="INT.">INT.</option>
+            <option value="EXT.">EXT.</option>
+        </select>
+
+        <label for="genreExamples">Select Genre Example:</label>
+        <select id="genreExamples">
+            <option value="">--Select--</option>
+            <option value="action">Action</option>
+            <option value="drama">Drama</option>
+            <option value="comedy">Comedy</option>
+            <option value="thriller">Thriller</option>
+            <option value="horror">Horror</option>
+        </select>
+
+        <label for="additionalExamples">Select Additional Example:</label>
+        <select id="additionalExamples">
+            <option value="">--Select--</option>
+            <option value="characterMap">Character Map</option>
+            <option value="synopsis">Synopsis</option>
+            <option value="screenplayBible">Screenplay Bible</option>
+            <option value="treatment">Treatment</option>
+        </select>
+    </div>
+
+    <script>
+        // Function to validate email using regex
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        // Function to validate password (minimum 6 characters, at least one letter and one number)
+        function validatePassword(password) {
+            const re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+            return re.test(password);
+        }
+
+        // Handle user registration
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            if (validateEmail(email) && validatePassword(password)) {
+                $.ajax({
+                    url: 'register.php',
+                    method: 'POST',
+                    data: { email: email, password: password },
+                    success: function(response) {
+                        alert(response);
+                    }
+                });
+            } else {
+                alert('Invalid email or password format.');
+            }
+        });
+
+        // Handle user login
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            $.ajax({
+                url: 'login.php',
+                method: 'POST',
+                data: { email: email, password: password },
+                success: function(response) {
+                    if (response === 'Login successful') {
+                        localStorage.setItem('currentUser', email);
+                        alert(response);
+                    } else {
+                        alert('Invalid email or password.');
+                    }
+                }
+            });
+        });
+
+        // Handle screenplay save
+        document.getElementById('saveButton').addEventListener('click', function() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const screenplayContent = document.getElementById('screenplayEditor').value;
+                const title = prompt('Enter title for your screenplay:');
+                if (title) {
+                    $.ajax({
+                        url: 'save_screenplay.php',
+                        method: 'POST',
+                        data: { email: currentUser, title: title, content: screenplayContent },
+                        success: function(response) {
+                            alert(response);
+                        }
+                    });
+                }
+            } else {
+                alert('You must be logged in to save a screenplay!');
+            }
+        });
+
+        // Handle screenplay load
+        document.getElementById('loadButton').addEventListener('click', function() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                $.ajax({
+                    url: 'load_screenplay.php',
+                    method: 'POST',
+                    data: { email: currentUser },
+                    success: function(response) {
+                        document.getElementById('screenplayEditor').value = response;
+                    }
+                });
+            } else {
+                alert('You must be logged in to load a screenplay!');
+            }
+        });
+
+        // Handle screenplay sharing
+        document.getElementById('shareButton').addEventListener('click', function() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const collaboratorEmail = prompt('Enter the email of the collaborator:');
+                if (collaboratorEmail) {
+                    $.ajax({
+                        url: 'share_screenplay.php',
+                        method: 'POST',
+                        data: { email: currentUser, collaboratorEmail: collaboratorEmail },
+                        success: function(response) {
+                            alert(response);
+                        }
+                    });
+                }
+            } else {
+                alert('You must be logged in to share a screenplay!');
+            }
+        });
+
+        // Handle exporting screenplay to text file
+        document.getElementById('exportButton').addEventListener('click', function() {
+            const screenplayContent = document.getElementById('screenplayEditor').value;
+            const blob = new Blob([screenplayContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'screenplay.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+
+        // Handle inserting predefined keywords
+        document.getElementById('predefinedKeywords').addEventListener('change', function() {
+            const keyword = this.value;
+            const editor = document.getElementById('screenplayEditor');
+            editor.value += `\n${keyword} `;
+        });
+
+        // Handle loading genre examples
+        document.getElementById('genreExamples').addEventListener('change', function() {
+            const genre = this.value;
+            const examples = {
+                action: 'INT. WAREHOUSE - NIGHT\nThe hero enters cautiously, gun drawn.',
+                drama: 'INT. COFFEE SHOP - DAY\nThe protagonist sips coffee, deep in thought.',
+                comedy: 'EXT. PARK - DAY\nA clown chases after a runaway balloon.',
+                thriller: 'INT. DARK ALLEY - NIGHT\nThe detective listens for any sound, nerves on edge.',
+                horror: 'EXT. ABANDONED HOUSE - NIGHT\nThe wind howls as the door creaks open.'
+            };
+            document.getElementById('screenplayEditor').value = examples[genre] || '';
+        });
+
+        // Handle loading additional examples
+        document.getElementById('additionalExamples').addEventListener('change', function() {
+            const example = this.value;
+            const examples = {
+                characterMap: 'Character Map Example\n- John: Protagonist\n- Jane: Antagonist\n- Bob: Sidekick',
+                synopsis: 'Synopsis Example\nA thrilling adventure of a hero who...',
+                screenplayBible: 'Screenplay Bible Example\n- Title: Epic Tale\n- Genre: Adventure\n- Characters: ...',
+                treatment: 'Treatment Example\nA detailed breakdown of scenes...'
+            };
+                    document.getElementById('screenplayEditor').value = examples[example] || '';
+        });
+    </script>
+</body>
+</html>
