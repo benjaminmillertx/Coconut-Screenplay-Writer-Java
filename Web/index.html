@@ -199,5 +199,91 @@
             }
         });
 
-        // Handle screenplay save
-        document.getElementBy
+            // Handle screenplay save
+        document.getElementById('saveButton').addEventListener('click', function() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const screenplayContent = document.getElementById('screenplayEditor').value;
+                const screenplayId = `screenplay-${Date.now()}`;
+                if (!screenplays[screenplayId]) {
+                    screenplays[screenplayId] = { content: screenplayContent, owner: currentUser, collaborators: [] };
+                    users[currentUser].screenplays.push(screenplayId);
+                    alert('Screenplay saved successfully!');
+                }
+            } else {
+                alert('You must be logged in to save a screenplay!');
+            }
+        });
+
+        // Handle screenplay load
+        document.getElementById('loadButton').addEventListener('click', function() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userScreenplays = users[currentUser].screenplays;
+                if (userScreenplays.length > 0) {
+                    const screenplayId = userScreenplays[0]; // for simplicity, loading the first screenplay
+                    document.getElementById('screenplayEditor').value = screenplays[screenplayId].content;
+                    alert('Screenplay loaded successfully!');
+                } else {
+                    alert('No saved screenplays found!');
+                }
+            } else {
+                alert('You must be logged in to load a screenplay!');
+            }
+        });
+
+        // Handle screenplay sharing
+        document.getElementById('shareButton').addEventListener('click', function() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const collaboratorEmail = prompt('Enter the email of the collaborator:');
+                if (users[collaboratorEmail]) {
+                    const userScreenplays = users[currentUser].screenplays;
+                    if (userScreenplays.length > 0) {
+                        const screenplayId = userScreenplays[0]; // assuming the user has one screenplay for simplicity
+                        screenplays[screenplayId].collaborators.push(collaboratorEmail);
+                        alert('Screenplay shared successfully!');
+                    }
+                } else {
+                    alert('Collaborator not found!');
+                }
+            } else {
+                alert('You must be logged in to share a screenplay!');
+            }
+        });
+
+        // Handle exporting screenplay to text file
+        document.getElementById('exportButton').addEventListener('click', function() {
+            const screenplayContent = document.getElementById('screenplayEditor').value;
+            const blob = new Blob([screenplayContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'screenplay.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+
+        // Handle inserting predefined keywords
+        document.getElementById('predefinedKeywords').addEventListener('change', function() {
+            const keyword = this.value;
+            const editor = document.getElementById('screenplayEditor');
+            editor.value += `\n${keyword} `;
+        });
+
+        // Handle loading genre examples
+        document.getElementById('genreExamples').addEventListener('change', function() {
+            const genre = this.value;
+            const examples = {
+                action: 'INT. WAREHOUSE - NIGHT\nThe hero enters cautiously, gun drawn.',
+                drama: 'INT. COFFEE SHOP - DAY\nThe protagonist sips coffee, deep in thought.',
+                comedy: 'EXT. PARK - DAY\nA clown chases after a runaway balloon.',
+                thriller: 'INT. DARK ALLEY - NIGHT\nThe detective listens for any sound, nerves on edge.',
+                horror: 'EXT. ABANDONED HOUSE - NIGHT\nThe wind howls as the door creaks open.'
+            };
+            document.getElementById('screenplayEditor').value = examples[genre] || '';
+        });
+    </script>
+</body>
+</html>
