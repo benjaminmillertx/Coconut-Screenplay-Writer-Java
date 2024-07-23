@@ -16,3 +16,13 @@ $email = $_POST['email'];
 
 $sql = "SELECT screenplays.content FROM screenplays JOIN users ON screenplays.user_id = users.id WHERE users.email='$email' LIMIT 1";
 $result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    echo $row['content'];
+} else {
+    echo "No screenplay found for this user.";
+}
+
+$conn->close();
+?>
